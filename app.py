@@ -1,4 +1,5 @@
 import numpy as np
+import datetime as dt
 
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
@@ -53,7 +54,7 @@ def precipitation():
 	# Query all measurements
 	results = session.query(Measurement.date, Measurement.prcp).all()
 
-	# Create a dictionary from the row data and append 
+	# Create a dictionary from the row data and append dictionary
 	measurement_dict = {}
 	for result in results:
 		date = result[0]
@@ -64,11 +65,32 @@ def precipitation():
 
 @app.route("/api/v1.0/stations")
 def stations():
+	""" return a JSON list all stations"""
 	results = session.query(Measurement.station).all()
 
 	return jsonify(results)
 
+@app.route("/api/v1.0/tobs")
+def tobs():
+
+	#results =session.query(Measurement.tobs,Measurement.date).all()
+
+	max_date = session.query(func.max(Measurement.date)).scalar()
+	year, month, day = max_date.split("-")
+	m_date = dt.date(int(year), int(month), int(day))
+	query_date = m_date - dt.timedelta(days=365)
+	data = session.query(Measurement.date,Measurement.tobs).\
+		filter(Measurement.date == query_date).all()
+
+	return jsonify(data)
+	# sel = []
+	# results =session.query(Measurement.tobs,Measurement.date).all()
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
 
 
