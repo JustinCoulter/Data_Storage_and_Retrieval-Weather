@@ -92,6 +92,9 @@ def tobs():
 @app.route("/api/v1.0/<start1>")
 def startx(start1):
 
+	""" returns a list with the cumulative max, min and avg temperature 
+	of all dates in the dataset after date entered """
+
 	startx = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start1).all()
 
@@ -100,6 +103,9 @@ def startx(start1):
 
 @app.route("/api/v1.0/<start>/<end>")
 def startend(start,end):
+
+	""" returns a list with the cumulative max, min and avg temperature 
+	of all dates in between the dataset after dates entered """
 
 	startend = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start).filter(Measurement.date <= end).all()
