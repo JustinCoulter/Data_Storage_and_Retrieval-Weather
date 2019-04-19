@@ -52,16 +52,18 @@ def welcome():
 def precipitation():
 	"""Return a dictionary using `date` as the key and `prcp` as the value."""
 	
-	results = session.query(Measurement.date, Measurement.prcp).all()
+	results = session.query(Measurement.date, Measurement.prcp, Measurement.station).all()
 
-	# this query actually overwrites the data and only returns one year. 
-	# but per conversation with Jason (TA), it is acceptable
+	# returning only date and prcp as was requested does not seem sufficient 
+	# because there are multiple stations with observations on each date
+	# so i concatenated the station id with the date for the key
 
 	measurement_dict = {}
 	for result in results:
 		date = result[0]
 		prcp = result[1]
-		measurement_dict[date] = [prcp]
+		station = result[2]
+		measurement_dict[date + "_" + station] = [prcp]
 
 	return jsonify(measurement_dict)
 
